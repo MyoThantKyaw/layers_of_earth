@@ -4,14 +4,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // import {translateCamera} from "./cameraTranslator.js"
 
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-// import { CSG } from 'three-csg-ts';
-
-// import { Mesh, Sphere, RedIntegerFormat } from 'three';
-// var Fig1_1No1 = require("../src/Fig1_1No1.js");
 
 var scene, camera, renderer, orbit;
 var perspective_camera;
-var ball;
 var pointLight, light;
 
 var clipPlanes;
@@ -22,12 +17,17 @@ const materialLayersRight = []
 const earthMeshSegment = 50;
 var cloud;
 var readyCount = 0;
-const cameraPos = new THREE.Vector3(11, 5, 11);
+var readyCountMax = 8;
+const cameraPos = new THREE.Vector3(14, 5, -6);
 const cameraLookat = new THREE.Vector3(0, 0, 0);
+var isPlaying = false;
+var loadingPrograssElement;
 
 function init() {
     var view_3d = document.getElementById("view-3d");
+    loadingPrograssElement = document.getElementById("loading-progress");
 
+    
     var body = document.body,
         html = document.documentElement;
 
@@ -61,7 +61,7 @@ function init() {
     orbit.dampingFactor = .1;
     orbit.saveState();
 
-    scene.add(new THREE.AxesHelper(8))
+    // scene.add(new THREE.AxesHelper(8))
 
     // clipping planes..
     clipPlanes = [
@@ -85,8 +85,9 @@ function init() {
             material.needsUpdate = true;
 
             readyCount += 1;
-            if (readyCount == 7) {
-                animate();
+            loadingPrograssElement.textContent = (readyCount / readyCountMax) * 100;
+            if (readyCount == readyCountMax) {
+                startAnimation();
             }
         },
         function (error) { console.log(error) })
@@ -100,8 +101,9 @@ function init() {
             matStarField.needsUpdate = true;
 
             readyCount += 1;
-            if (readyCount == 7) {
-                animate();
+            loadingPrograssElement.textContent = (readyCount / readyCountMax) * 100;
+            if (readyCount == readyCountMax) {
+                startAnimation();
             }
 
         },
@@ -125,7 +127,6 @@ function init() {
     light.shadow.camera.right = 1
     light.shadow.camera.top = 1
     light.shadow.camera.bottom = -1
-    // light.shadowCameraVisible = true
 
     light.shadow.bias = 0.001
 
@@ -139,7 +140,6 @@ function init() {
             var geometryCloud = new THREE.SphereBufferGeometry(earthRadius + .07, 32, 32)
             materialCloud = new THREE.MeshBasicMaterial({
                 map: texture,
-                // side: THREE.DoubleSide,
                 opacity: 0.8,
                 transparent: true,
                 depthWrite: false,
@@ -151,16 +151,15 @@ function init() {
             scene.add(cloud)
 
             readyCount += 1;
-            if (readyCount == 7) {
-                animate();
+            loadingPrograssElement.textContent = (readyCount / readyCountMax) * 100;
+            if (readyCount == readyCountMax) {
+                startAnimation();
             }
         },
         function (error) { console.log(error) })
 
     /// add half rings for layers..
-
     const endRadius = [1, 2.2, earthRadius - .15, earthRadius - .007]
-    // const colors = [0xff00ff, 0xf0f033, 0x00f2f2, 0x10f013]
 
     var geoCore = new THREE.SphereBufferGeometry(endRadius[0], 50, 50);
     var matCore = new THREE.MeshLambertMaterial({});
@@ -173,8 +172,9 @@ function init() {
         matCore.needsUpdate = true;
 
         readyCount += 1;
-        if (readyCount == 7) {
-            animate();
+        loadingPrograssElement.textContent = (readyCount / readyCountMax) * 100;
+        if (readyCount == readyCountMax) {
+            startAnimation();
         }
 
     }, function (error) { console.log("error") })
@@ -199,13 +199,12 @@ function init() {
         layers.push(layer);
     }
 
-    addTextures();
     setupListeners();
-
+    addTextures();
 }
 
 var layersTexturesNames = ["outerCore.jpg", "rock2.jpg", "clean-brown-soil-texture.jpg"];
-
+var crustText;
 function addTextures() {
     var textureLoader1 = new THREE.TextureLoader();
     textureLoader1.load("textures/" + layersTexturesNames[0], function (texture) {
@@ -216,12 +215,12 @@ function addTextures() {
         materialLayersRight[0].needsUpdate = true;
 
         readyCount += 1;
-        if (readyCount == 7) {
-            animate();
+        loadingPrograssElement.textContent = (readyCount / readyCountMax) * 100;
+        if (readyCount == readyCountMax) {
+            startAnimation();
         }
-
     },
-        function (error) { console.log(error) })
+    function (error) { console.log(error) })
 
     var textureLoader2 = new THREE.TextureLoader();
     textureLoader2.load("textures/" + layersTexturesNames[1], function (texture) {
@@ -232,8 +231,9 @@ function addTextures() {
         materialLayersRight[1].needsUpdate = true;
 
         readyCount += 1;
-        if (readyCount == 7) {
-            animate();
+        loadingPrograssElement.textContent = (readyCount / readyCountMax) * 100;
+        if (readyCount == readyCountMax) {
+            startAnimation();
         }
     },
         function (error) { console.log(error) })
@@ -247,9 +247,9 @@ function addTextures() {
         materialLayersRight[2].needsUpdate = true;
 
         readyCount += 1;
-
-        if (readyCount == 7) {
-            animate();
+        loadingPrograssElement.textContent = (readyCount / readyCountMax) * 100;
+        if (readyCount == readyCountMax) {
+            startAnimation();
         }
     },
         function (error) { console.log(error); })
@@ -260,10 +260,9 @@ function addTextures() {
 
         var matLayerText = new THREE.MeshBasicMaterial({
             color: 0x000000,
-            side: THREE.DoubleSide,
         });
 
-        var mantleTextShape = font.generateShapes("အကာပိုင္း", .3);
+        var mantleTextShape = font.generateShapes("အကာပိုင္း", .26);
 
         var geoMantleText = new THREE.ShapeBufferGeometry(mantleTextShape);
         geoMantleText.computeBoundingBox();
@@ -298,7 +297,7 @@ function addTextures() {
 
         outerCoreText.position.y = Math.cos(-.52) * 1.6;
         outerCoreText.position.x = .05;
-        outerCoreText.position.z = Math.sin(-.52) * 1.6  ;
+        outerCoreText.position.z = Math.sin(-.52) * 1.6;
 
         scene.add(outerCoreText);
 
@@ -322,20 +321,79 @@ function addTextures() {
 
         scene.add(innerCoreText);
 
+        // Crust
+        var matCrustText = new THREE.MeshBasicMaterial({
+            color: 0xededed,
+        });
 
+        var crustTextShape = font.generateShapes("အခြံပိုင္း", .2);
+        var geoCrustText = new THREE.ShapeBufferGeometry(crustTextShape);
+        geoCrustText.computeBoundingBox();
+
+        crustText = new THREE.Mesh(geoCrustText, matCrustText);
+
+        var xMid = - (geoCrustText.boundingBox.max.x - geoCrustText.boundingBox.min.x);
+        geoCrustText.translate(xMid / 2, -.1, 0);
+
+        crustText.rotateY(Math.PI / 2)
+        crustText.rotateZ(-.5)
+
+        crustText.position.y = Math.cos(-.5) * 4;
+        crustText.position.x = .05;
+        crustText.position.z = Math.sin(-.5) * 4;
+
+        scene.add(crustText);
+
+        readyCount += 1;
+        loadingPrograssElement.textContent = (readyCount / readyCountMax) * 100;
+        if (readyCount == readyCountMax) {
+            startAnimation();
+        }
     })
+}
 
+function startAnimation(){
+
+    angleSlider.value = Math.PI / 2;
+    changeCuttingAngle(angleSlider.value);
+
+    isPlaying = true;
+    animate();
+    $(".dimmer").dimmer('hide');
+}
+
+function pauseAnimation(){
+    
+    isPlaying = false;
+    clock.stop();
+    offsetTime = elapsed;
+}
+
+function resumeAnimation(){
+    
+    isPlaying = true;
+    clock.start();
+    animate();
 }
 
 // let layerOuterLef;
 let clock = new THREE.Clock();
 const twoPi = Math.PI * 2;
 var t;
+var animationId;
+var offsetTime = 0;
+var elapsed;
 
 function animate() {
-    requestAnimationFrame(animate);
+    if(isPlaying){
+        animationId = requestAnimationFrame(animate);
+    }
+    else{
+        cancelAnimationFrame(animationId); return;
+    }
+    elapsed = offsetTime + clock.getElapsedTime()
 
-    t = ((clock.getElapsedTime() % 80) / 80) * twoPi;
+    t = ((elapsed % 80) / 80) * twoPi;
 
     cloud.rotation.z = Math.sin(t);
     cloud.rotation.y = Math.cos(t);
@@ -349,35 +407,39 @@ function render() {
     renderer.render(scene, camera);
 }
 
-var firstTime = true;
-
+var angleSlider;
 function setupListeners() {
-    var angleSlider = document.getElementById("angle-slider");
+    angleSlider = document.getElementById("angle-slider");
     angleSlider.addEventListener("input", function (evt) {
-
-        var angle = angleSlider.value;
-        var x = Math.cos(angle);
-        var y = Math.sin(angle);
-
-        for (var i = 0; i < layers.length; i++) {
-            layers[i].rotation.y = -angle;
-        }
-
-        if (angle > Math.PI) {
-            if (material.clipIntersection) { material.needsUpdate = true; }
-
-            materialCloud.clipIntersection = false;
-            material.clipIntersection = false;
-        }
-        else {
-            if (!material.clipIntersection) { material.needsUpdate = true; }
-
-            materialCloud.clipIntersection = true;
-            material.clipIntersection = true;
-        }
-
-        clipPlanes[1].set(new THREE.Vector3(x, 0, y), 0);
+        changeCuttingAngle(angleSlider.value)
     })
+}
+
+function changeCuttingAngle(angle){
+    
+    var x = Math.cos(angle);
+    var y = Math.sin(angle);
+
+    for (var i = 0; i < layers.length; i++) {
+        layers[i].rotation.y = -angle;
+    }
+
+    if (angle > Math.PI) {
+        if (material.clipIntersection) { material.needsUpdate = true; }
+
+        materialCloud.clipIntersection = false;
+        material.clipIntersection = false;
+    }
+    else {
+        if (!material.clipIntersection) { material.needsUpdate = true; }
+
+        materialCloud.clipIntersection = true;
+        material.clipIntersection = true;
+    }
+
+    clipPlanes[1].set(new THREE.Vector3(x, 0, y), 0);
+
+    crustText.visible = !(angle < .1);
 }
 
 function resetView() {
@@ -386,5 +448,5 @@ function resetView() {
 
 init()
 
-export { resetView }
+export { resetView, pauseAnimation, resumeAnimation}
 

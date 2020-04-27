@@ -10,19 +10,30 @@
 
     <link rel="stylesheet" type="text/css" href="styles/semantic-ui/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="styles/semantic-ui/dropdown.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/semantic-ui/modal.min.css">
 
     <link rel="stylesheet" href="style.css" />
+
+    <script src="scripts/semantic-ui/semantic.min.js"></script>
+    <script src="scripts/semantic-ui/modal.min.js"></script>
+
 
 </head>
 
 <body>
     <div id="toolbar-top">
-        <button id="btnHome" class="circular large ui icon blue basic button">
+
+        <button id="btnHome" class="circular medium ui icon blue basic button">
             <i class="home icon" size='large'></i>
+        </button>
+        <span></span>
+        <button id="btnInfo" class="circular medium ui icon blue basic button">
+            <i class="info icon" size='large'></i>
         </button>
 
     </div>
     <div id="toolbar">
+
         <input id="angle-slider" type="range" min="0" max="6.2" value="0" step=".02" class="slider">
     </div>
 
@@ -30,10 +41,28 @@
 
     </div>
 
-    <script src="app_bundle_3d.js"></script>
 
-    <script src="scripts/semantic-ui/semantic.min.js"></script>
+    <div class="ui basic modal">
+        <i class="close icon"></i>
+
+        <div class="header">Layers Of The Earth</div>
+        <div class="content">
+            <p class="paragraph">အခြေခံ ကျောင်းသား/သူ များအတွက် သင်ထောက်ကူအဖြစ် ရည်ရွယ်ပါသည်။
+            </p>
+
+            <p>Developed by <i>V2</i> Group</p>
+            <p>Contact <b>myothantkyaw787@gmail.com</b></p>
+        </div>
+    </div>
+
+
+    <div class="ui active dimmer">
+        <div class="ui text loader">Loading Textures <span id="loading-progress">0</span>%</div>
+    </div>
+
     <script src="scripts/ui.js"></script>
 
+    <script src="app_bundle_3d.js"></script>
 </body>
+
 </html>
