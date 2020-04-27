@@ -203,7 +203,7 @@ function init() {
     addTextures();
 }
 
-var layersTexturesNames = ["outerCore.jpg", "rock2.jpg", "clean-brown-soil-texture.jpg"];
+var layersTexturesNames = ["outerCore.jpg", "Tileable classic sand texture.jpg", "clean-brown-soil-texture.jpg"];
 var crustText;
 function addTextures() {
     var textureLoader1 = new THREE.TextureLoader();
