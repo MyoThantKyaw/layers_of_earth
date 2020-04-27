@@ -4,20 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ကမ္ဘာ့မြေထု၏ အလွှာများ</title>
+
+    <script src="scripts/jquery-3.1.1.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="styles/semantic-ui/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/semantic-ui/dropdown.min.css">
+
     <link rel="stylesheet" href="style.css" />
 
 </head>
 
 <body>
-    <div id="toolbar">
-        <input id="angle-slider" type="range" min="0" max="6.2" value="1" step = ".1" class="slider" >
+    <div id="toolbar-top">
+        <button id="btnHome" class="circular large ui icon blue basic button">
+            <i class="home icon" size='large'></i>
+        </button>
+
     </div>
-    
+    <div id="toolbar">
+        <input id="angle-slider" type="range" min="0" max="6.2" value="0" step=".02" class="slider">
+    </div>
+
     <div id="view-3d">
 
     </div>
-    <script src="app_bundle_3d.js"></script>
-</body>
 
+    <script src="app_bundle_3d.js"></script>
+
+    <script src="scripts/semantic-ui/semantic.min.js"></script>
+    <script src="scripts/ui.js"></script>
+
+</body>
 </html>

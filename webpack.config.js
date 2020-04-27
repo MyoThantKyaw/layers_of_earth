@@ -7,8 +7,9 @@ module.exports = {
     },
     output: {
         path : path.resolve("dis"),
-        filename: "app_bundle_3d.js"
-       
+        filename: "app_bundle_3d.js",
+        libraryTarget: 'var',
+        library: "threeD"
     },
 
     module: {
